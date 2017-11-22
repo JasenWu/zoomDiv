@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Document</title>
+  <style type="text/css">
+    #div_wrapper {
+      width: 500px;
+      height: 500px;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      margin-left: -250px;
+      margin-top: -250px;
+      border: 1px solid silver;
+
+    }
+
+    #div_01 {
+      position: absolute;
+      width: 10px;
+      height: 100%;
+      /*background-color: red;*/
+      top: 0px;
+      right: 0px;
+    }
+
+    #div_01:hover {
+      cursor: e-resize;
+    }
+
+    #div_02 {
+      position: absolute;
+      width: 100%;
+      height: 10px;
+      /*background-color: red;*/
+      bottom: 0px;
+      left: 0px;
+    }
+
+    #div_02:hover {
+      cursor: n-resize;
+    }
+
+    #div_03 {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      /*background-color:black;*/
+      right: 0px;
+      bottom: 0px;
+    }
+
+    #div_03:hover {
+      cursor: nw-resize;
+    }
+
+    #div_0 {
+      text-align: center;
+      height: 30px;
+      width: 100%;
+      background-color: silver;
+      margin: 0px;
+    }
+
+    #div_0 p {
+      margin: 0px;
+      line-height: 30px;
+      font: bold 17px 微软雅黑, arial;
+    }
+  </style>
+  <script type="text/javascript">
+    var offsetLeft, //点击鼠标的实时位置记录 x
+      offsetTop, //点击鼠标的实时位置记录 y
+      timer,
+      mouse_x, //鼠标在操作元素上的实时位置X
+      mouse_y, //鼠标在操作元素上的实时位置Y
+      margin_left, //横向移动偏移量
+      margin_top; //纵向移动偏移量
+    var to_x, //
+      to_y;
+
+    function drag(id, type) {
+      var item = document.getElementById(id); //正在操作的div元素
+      document.onmousemove = function(e) { //在操作元素上移动鼠标
+        var e = e || window.event;
+        mouse_x = e.pageX; //将鼠标的实时位置缓存到mouse_x
+        mouse_y = e.pageY; //将鼠标的实时位置缓存到mouse_y
+      };
+      item.onmousedown = function() { //鼠标在操作元素上按下时的回调函数
+        // offsetTop以及offsetTop必须要放在mousedown里面，每次都要计算
+        offsetLeft = item.offsetLeft; //点击鼠标的实时位置记录 x
+        offsetTop = item.offsetTop; //点击鼠标的实时位置记录 y
+        margin_top = mouse_y - offsetTop; //纵向移动偏移量
+        margin_left = mouse_x - offsetLeft; //横向移动偏移量
+        console.log("margin_top", margin_top);
+        console.log("margin_top", margin_left);
+
+        timer = setInterval(function() {
+          if (timer) {
+            var max_with = 800,
+              max_height = 600;
+            to_x = mouse_x - margin_left; //
+            to_y = mouse_y - margin_top;
+            to_x = Math.min(to_x, max_with);
+            to_y = Math.min(to_y, max_height);
+            // 一定要记得加“px"
+            if (type == "x") {
+              item.style.left = to_x + "px";
+              document.getElementById("div_wrapper").style.width = to_x + 10 + "px";
+              document.getElementById("div_03").style.left = to_x + "px";
+            } else if (type == "y") {
+              item.style.top = to_y + "px";
+              document.getElementById("div_03").style.top = to_y + "px";
+              document.getElementById("div_wrapper").style.height = to_y + 10 + "px";
+            }
+            //默认为上下左右移动
+            else {
+              item.style.left = to_x + "px";
+              item.style.top = to_y + "px";
+              // Style刷新
+              document.getElementById("div_01").style.left = to_x + "px";
+              document.getElementById("div_02").style.top = to_y + "px";
+              document.getElementById("div_wrapper").style.width = to_x + 10 + "px";
+              document.getElementById("div_wrapper").style.height = to_y + 10 + "px";
+            }
+          }
+        }, 5);
+      };
+      document.onmouseup = function() {
+        clearInterval(timer);
+        timer = 0;
+      }
+    }
+
+    window.onload = function() {
+      drag("div_01", "x");
+      drag("div_02", "y");
+      drag("div_03");
+      // drag("div_wrapper");
+    }
+  </script>
+</head>
+
+<body>
+  <div id="div_wrapper">
+    <div id="div_0">
+      <p>拖拽可更改DIV大小</p>
+    </div>
+    <div id="div_01"></div>
+    <div id="div_02"></div>
+    <div id="div_03"></div>
+  </div>
+</body>
+
+</html>
